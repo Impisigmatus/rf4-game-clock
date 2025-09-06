@@ -1,30 +1,27 @@
 package notification
 
 import (
-	"io"
-	"io/fs"
-	"os"
+	"fmt"
 
 	"github.com/gen2brain/beeep"
 )
 
-func Notify(title string, message string, icon fs.File) error {
-	tmp, err := os.CreateTemp("", "*.png")
-	if err != nil {
-		return err
+type Notification struct {
+	Title    string
+	IconPath string
+}
+
+func NewNotification(title string, iconPath string) *Notification {
+	return &Notification{
+		Title:    title,
+		IconPath: iconPath,
 	}
+}
 
-	name := tmp.Name()
-	defer os.Remove(name)
-	defer tmp.Close()
+func (notification *Notification) Notify(format string, a ...any) {
+	_ = beeep.Notify(notification.Title, fmt.Sprintf(format, a...), notification.IconPath)
+}
 
-	if _, err = io.Copy(tmp, icon); err != nil {
-		return err
-	}
-
-	if err := beeep.Notify(title, message, name); err != nil {
-		return err
-	}
-
-	return nil
+func (notification *Notification) Alert(format string, a ...any) {
+	_ = beeep.Alert(notification.Title, fmt.Sprintf(format, a...), notification.IconPath)
 }

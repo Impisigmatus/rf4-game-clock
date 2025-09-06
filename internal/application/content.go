@@ -11,8 +11,8 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func (gui *Gui) tab1() *fyne.Container {
-	// --- Вкладка 1: Текущее время ---
+// --- Вкладка 1: Текущее время ---
+func (gui *Gui) tabTime() *fyne.Container {
 	realTime := widget.NewLabel("")
 	gameTime := widget.NewLabel("")
 
@@ -25,6 +25,7 @@ func (gui *Gui) tab1() *fyne.Container {
 		realTime.SetText(fmt.Sprintf("Реальное время: %02d:%02d", hours, minutes))
 		gameTime.SetText(fmt.Sprintf("Игровое время:  %02d:%02d", gameHours, gameMinutes))
 	}
+
 	// --- Таймер обновления ---
 	go func() {
 		for range time.Tick(time.Second) {
@@ -33,18 +34,18 @@ func (gui *Gui) tab1() *fyne.Container {
 	}()
 	updateTime()
 
-	tab1Content := container.NewVBox(
+	content := container.NewVBox(
 		widget.NewLabelWithStyle("🕓 Время в игре", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		realTime,
 		gameTime,
 		layout.NewSpacer(),
 	)
 
-	return tab1Content
+	return content
 }
 
-func (gui *Gui) tab2() *fyne.Container {
-	// --- Вкладка 2: Калькулятор времени ---
+// --- Вкладка 2: Калькулятор времени ---
+func (gui *Gui) tabCalculator() *fyne.Container {
 	hoursOptions := make([]string, 24)
 	for i := 0; i <= 23; i++ {
 		hoursOptions[i] = fmt.Sprintf("%02d", i)
@@ -70,40 +71,40 @@ func (gui *Gui) tab2() *fyne.Container {
 			result.SetText(err.Error())
 			return
 		}
+
 		result.SetText(fmt.Sprintf("Это игровое время наступит в %02d:%02d", hour, minute))
+		gui.notification.Alert("Не забудьте про рыбалку в %02d:%02d", hour, minute)
 	}
 
 	hoursSelect.OnChanged = func(_ string) { setTime() }
 	minutesSelect.OnChanged = func(_ string) { setTime() }
 
-	tab2Content := container.NewVBox(
+	content := container.NewVBox(
 		widget.NewLabelWithStyle("🧮 Калькулятор игрового времени", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		container.NewHBox(hoursSelect, minutesSelect),
 		result,
 		layout.NewSpacer(),
 	)
-	return tab2Content
+	return content
 }
 
+// --- Настройки темы ---
 func (gui *Gui) themeToggle() *fyne.Container {
-	// --- Настройки темы ---
 	prefs := gui.guiApp.Preferences()
 	themePref := prefs.StringWithFallback("theme", "light")
-
 	if themePref == "dark" {
 		gui.guiApp.Settings().SetTheme(theme.DarkTheme())
 	} else {
 		gui.guiApp.Settings().SetTheme(theme.LightTheme())
 	}
 
-	// --- Тумблер темы ---
 	themeToggle := widget.NewCheck("Тёмная тема", func(checked bool) {
 		if checked {
 			gui.guiApp.Settings().SetTheme(theme.DarkTheme())
-			prefs.SetString("theme", "dark") // сохраняем выбор
+			prefs.SetString("theme", "dark")
 		} else {
 			gui.guiApp.Settings().SetTheme(theme.LightTheme())
-			prefs.SetString("theme", "light") // сохраняем выбор
+			prefs.SetString("theme", "light")
 		}
 	})
 	themeToggle.SetChecked(themePref == "dark")

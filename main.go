@@ -2,6 +2,8 @@ package main
 
 import (
 	"embed"
+	"io"
+	"os"
 
 	"github.com/Impisigmatus/rf4-game-clock/internal/application"
 	"github.com/Impisigmatus/rf4-game-clock/internal/notification"
@@ -11,16 +13,40 @@ import (
 var assets embed.FS
 
 func main() {
-	icon, err := assets.Open("assets/icon.png")
+	const (
+		title  = "РР4 Игровое время"
+		width  = 400
+		height = 250
+
+		iconAssetPath = "assets/icon.png"
+	)
+
+	iconPath, err := loadIcon(iconAssetPath)
 	if err != nil {
 		panic(err)
 	}
-	defer icon.Close()
 
-	if err := notification.Notify("РР4 Игровое время", "Приложение запущено", icon); err != nil {
-		panic(err)
+	notification := notification.NewNotification(title, iconPath)
+	gui := application.NewGui("rf4-game-clock", title, width, height, notification)
+	gui.Run()
+}
+
+func loadIcon(iconAssetPath string) (string, error) {
+	file, err := assets.Open(iconAssetPath)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	tmp, err := os.CreateTemp("", "*.png")
+	if err != nil {
+		return "", err
+	}
+	defer tmp.Close()
+
+	if _, err = io.Copy(tmp, file); err != nil {
+		return "", err
 	}
 
-	gui := application.NewGui("rf4-game-clock", "РР4 Игровое время", 400, 250)
-	gui.Run()
+	return tmp.Name(), nil
 }
