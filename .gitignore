@@ -1,0 +1,12 @@
+vendor/
+build/
+__debug_bin*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
