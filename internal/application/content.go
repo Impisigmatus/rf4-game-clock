@@ -29,7 +29,7 @@ func (gui *GuiApplication) tabTime() *fyne.Container {
 	// --- Таймер обновления ---
 	go func() {
 		for range time.Tick(time.Second) {
-			updateTime()
+			fyne.Do(updateTime)
 		}
 	}()
 	updateTime()
