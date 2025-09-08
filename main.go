@@ -3,10 +3,10 @@ package main
 import (
 	"embed"
 	"io"
-	"os"
 
 	"github.com/Impisigmatus/rf4-game-clock/internal/application"
 	"github.com/Impisigmatus/rf4-game-clock/internal/notification"
+	"github.com/gen2brain/beeep"
 )
 
 //go:embed assets/**
@@ -14,39 +14,36 @@ var assets embed.FS
 
 func main() {
 	const (
-		title  = "РР4 Игровое время"
-		width  = 400
-		height = 250
+		appName = "rf4-game-clock"
+		title   = "РР4 Игровое время"
+		width   = 400
+		height  = 250
 
-		iconAssetPath = "assets/icon.png"
+		iconPath = "assets/icon.png"
 	)
+	beeep.AppName = appName
 
-	iconPath, err := loadIcon(iconAssetPath)
+	icon, err := loadIcon(iconPath)
 	if err != nil {
 		panic(err)
 	}
 
-	notification := notification.NewNotification(title, iconPath)
-	gui := application.NewGui("rf4-game-clock", title, width, height, notification)
+	notification := notification.NewNotification(title, icon)
+	gui := application.NewGuiApplication(appName, title, width, height, notification)
 	gui.Run()
 }
 
-func loadIcon(iconAssetPath string) (string, error) {
-	file, err := assets.Open(iconAssetPath)
+func loadIcon(path string) ([]byte, error) {
+	file, err := assets.Open(path)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer file.Close()
 
-	tmp, err := os.CreateTemp("", "*.png")
+	data, err := io.ReadAll(file)
 	if err != nil {
-		return "", err
-	}
-	defer tmp.Close()
-
-	if _, err = io.Copy(tmp, file); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return tmp.Name(), nil
+	return data, nil
 }

@@ -12,7 +12,7 @@ import (
 )
 
 // --- Вкладка 1: Текущее время ---
-func (gui *Gui) tabTime() *fyne.Container {
+func (gui *GuiApplication) tabTime() *fyne.Container {
 	realTime := widget.NewLabel("")
 	gameTime := widget.NewLabel("")
 
@@ -45,7 +45,7 @@ func (gui *Gui) tabTime() *fyne.Container {
 }
 
 // --- Вкладка 2: Калькулятор времени ---
-func (gui *Gui) tabCalculator() *fyne.Container {
+func (gui *GuiApplication) tabCalculator() *fyne.Container {
 	hoursOptions := make([]string, 24)
 	for i := 0; i <= 23; i++ {
 		hoursOptions[i] = fmt.Sprintf("%02d", i)
@@ -89,7 +89,7 @@ func (gui *Gui) tabCalculator() *fyne.Container {
 }
 
 // --- Настройки темы ---
-func (gui *Gui) themeToggle() *fyne.Container {
+func (gui *GuiApplication) themeToggle() *fyne.Container {
 	prefs := gui.guiApp.Preferences()
 	themePref := prefs.StringWithFallback("theme", "light")
 	if themePref == "dark" {

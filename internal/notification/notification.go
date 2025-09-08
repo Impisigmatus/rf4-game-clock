@@ -7,21 +7,21 @@ import (
 )
 
 type Notification struct {
-	Title    string
-	IconPath string
+	Title string
+	Icon  []byte
 }
 
-func NewNotification(title string, iconPath string) *Notification {
+func NewNotification(title string, icon []byte) *Notification {
 	return &Notification{
-		Title:    title,
-		IconPath: iconPath,
+		Title: title,
+		Icon:  icon,
 	}
 }
 
 func (notification *Notification) Notify(format string, a ...any) {
-	_ = beeep.Notify(notification.Title, fmt.Sprintf(format, a...), notification.IconPath)
+	_ = beeep.Notify(notification.Title, fmt.Sprintf(format, a...), notification.Icon)
 }
 
 func (notification *Notification) Alert(format string, a ...any) {
-	_ = beeep.Alert(notification.Title, fmt.Sprintf(format, a...), notification.IconPath)
+	_ = beeep.Alert(notification.Title, fmt.Sprintf(format, a...), notification.Icon)
 }

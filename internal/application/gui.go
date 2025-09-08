@@ -8,7 +8,7 @@ import (
 	"fyne.io/fyne/v2/container"
 )
 
-type Gui struct {
+type GuiApplication struct {
 	app *Application
 
 	guiApp fyne.App
@@ -17,12 +17,12 @@ type Gui struct {
 	notification *notification.Notification
 }
 
-func NewGui(id string, title string, width float32, height float32, notification *notification.Notification) *Gui {
+func NewGuiApplication(id string, title string, width float32, height float32, notification *notification.Notification) *GuiApplication {
 	guiApp := app.NewWithID(id) // Указываем ID, чтобы prefs сохранялись
 	window := guiApp.NewWindow(title)
 	window.Resize(fyne.NewSize(width, height))
 
-	return &Gui{
+	return &GuiApplication{
 		app: NewApplication(),
 
 		guiApp: guiApp,
@@ -32,12 +32,12 @@ func NewGui(id string, title string, width float32, height float32, notification
 	}
 }
 
-func (gui *Gui) Run() {
+func (gui *GuiApplication) Run() {
 	gui.window.SetContent(gui.content())
 	gui.window.ShowAndRun()
 }
 
-func (gui *Gui) content() *fyne.Container {
+func (gui *GuiApplication) content() *fyne.Container {
 	// --- Создаем вкладки ---
 	tabs := container.NewAppTabs(
 		container.NewTabItem("Время в игре", gui.tabTime()),
