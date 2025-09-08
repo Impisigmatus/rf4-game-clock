@@ -13,11 +13,10 @@ clean: ## Очистить рабочее окружение
 	rm -rf vendor
 	go clean -r -i -testcache -modcache
 
-build-windows: setup ## Собрать проект под Windows
-	GOOS=windows GOARCH=amd64 go build -o $(BUILD)/$(PROJECT).exe main.go
+build: build-linux build-windows ## Собрать проект
 
-build-linux: setup ## Собрать проект под Linux
+build-windows: setup
+	CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc GOOS=windows GOARCH=amd64 go build -ldflags="-H windowsgui" -o $(BUILD)/$(PROJECT).exe main.go
+
+build-linux: setup
 	GOOS=linux GOARCH=amd64 go build -o $(BUILD)/$(PROJECT) main.go
-
-build-darwin: setup ## Собрать проект под macOS
-	GOOS=darwin GOARCH=amd64 go build -o $(BUILD)/$(PROJECT) main.go
