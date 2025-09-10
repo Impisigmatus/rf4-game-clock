@@ -11,23 +11,25 @@ import (
 )
 
 func (gui *GuiApplication) tabNotification() *fyne.Container {
+	// Создаем выборку часов
 	hoursOptions := make([]string, 24)
 	for i := 0; i <= 23; i++ {
 		hoursOptions[i] = fmt.Sprintf("%02d", i)
 	}
-	minutesOptions := make([]string, 2)
-	for i := 0; i < 60; i += 30 {
-		minutesOptions[i/30] = fmt.Sprintf("%02d", i)
-	}
-
 	hoursSelect := widget.NewSelect(hoursOptions, nil)
 	hoursSelect.PlaceHolder = "HH"
 	hoursSelect.Selected = "00"
 
+	// Создаем выборку минут
+	minutesOptions := make([]string, 2)
+	for i := 0; i < 60; i += 30 {
+		minutesOptions[i/30] = fmt.Sprintf("%02d", i)
+	}
 	minutesSelect := widget.NewSelect(minutesOptions, nil)
 	minutesSelect.PlaceHolder = "MM"
 	minutesSelect.Selected = "00"
 
+	// Создаем текстовое поле
 	result := widget.NewLabel("")
 
 	setTime := func() {
@@ -44,8 +46,8 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 	hoursSelect.OnChanged = func(_ string) { setTime() }
 	minutesSelect.OnChanged = func(_ string) { setTime() }
 
-	var buttonDisabled bool
 	// Создаем кнопку
+	var buttonDisabled bool
 	notifyButton := widget.NewButton("Уведомить", func() {
 		if buttonDisabled {
 			return
@@ -70,9 +72,9 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 	content := container.NewVBox(
 		widget.NewLabelWithStyle("Оповещения о рыбалке", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		container.NewHBox(hoursSelect, minutesSelect),
+		result,
 		notifyHourlyCheck,
 		notifyButton,
-		result,
 		layout.NewSpacer(),
 	)
 	return content
