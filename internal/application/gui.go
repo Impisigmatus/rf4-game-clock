@@ -2,6 +2,7 @@ package application
 
 import (
 	"github.com/Impisigmatus/rf4-game-clock/internal/notification"
+	"github.com/sirupsen/logrus"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -34,14 +35,15 @@ func NewGuiApplication(id string, title string, width float32, height float32, n
 
 func (gui *GuiApplication) Run() {
 	gui.window.SetContent(gui.content())
+	logrus.Info("Starting application")
 	gui.window.ShowAndRun()
 }
 
 func (gui *GuiApplication) content() *fyne.Container {
 	// --- Создаем вкладки ---
 	tabs := container.NewAppTabs(
-		container.NewTabItem("Время в игре", gui.tabTime()),
-		container.NewTabItem("Калькулятор времени", gui.tabCalculator()),
+		container.NewTabItem("Игровое время", gui.tabClock()),
+		container.NewTabItem("Оповещения", gui.tabNotification()),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
 

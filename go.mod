@@ -1,10 +1,11 @@
 module github.com/Impisigmatus/rf4-game-clock
 
-go 1.24.5
+go 1.25.1
 
 require (
 	fyne.io/fyne/v2 v2.6.3
 	github.com/gen2brain/beeep v0.11.1
+	github.com/sirupsen/logrus v1.9.3
 )
 
 require (

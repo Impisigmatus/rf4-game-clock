@@ -2,12 +2,29 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"io"
+	"os"
+	"path"
+	"runtime"
 
 	"github.com/Impisigmatus/rf4-game-clock/internal/application"
 	"github.com/Impisigmatus/rf4-game-clock/internal/notification"
 	"github.com/gen2brain/beeep"
+	"github.com/sirupsen/logrus"
 )
+
+func init() {
+	logrus.SetReportCaller(true)
+	logrus.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: "15:04:05",
+		CallerPrettyfier: func(frame *runtime.Frame) (string, string) {
+			file := frame.File[len(path.Dir(os.Args[0]))+1:]
+			line := frame.Line
+			return "", fmt.Sprintf("%s:%d", file, line)
+		},
+	})
+}
 
 //go:embed assets/**
 var assets embed.FS
@@ -25,7 +42,7 @@ func main() {
 
 	icon, err := loadIcon(iconPath)
 	if err != nil {
-		panic(err)
+		logrus.Panicf("Invalid loading notification icon: %s", err)
 	}
 
 	notification := notification.NewNotification(title, icon)
