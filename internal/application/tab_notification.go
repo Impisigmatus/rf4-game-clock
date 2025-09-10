@@ -65,6 +65,7 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 		} else {
 			notifyButton.Importance = widget.HighImportance // Обычный/акцентный цвет
 		}
+		notifyButton.Refresh()
 
 		logrus.Infof("TODO: Уведомлять каждый час %t", checked)
 	})
