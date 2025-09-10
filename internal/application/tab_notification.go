@@ -44,21 +44,34 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 	hoursSelect.OnChanged = func(_ string) { setTime() }
 	minutesSelect.OnChanged = func(_ string) { setTime() }
 
-	// Добавляем переключатель
-	notifyHourlyCheck := widget.NewCheck("Уведомлять каждый час", func(checked bool) {
-		logrus.Infof("TODO: Уведомить %t", checked)
-	})
-
-	// Добавляем кнопку
+	var buttonDisabled bool
+	// Создаем кнопку
 	notifyButton := widget.NewButton("Уведомить", func() {
+		if buttonDisabled {
+			return
+		}
+
 		logrus.Info("TODO: Уведомить")
+	})
+	notifyButton.Importance = widget.HighImportance
+
+	// Создаем переключатель
+	notifyHourlyCheck := widget.NewCheck("Уведомлять каждый час", func(checked bool) {
+		buttonDisabled = checked
+		if checked {
+			notifyButton.Importance = widget.LowImportance // Серый цвет
+		} else {
+			notifyButton.Importance = widget.HighImportance // Обычный/акцентный цвет
+		}
+
+		logrus.Infof("TODO: Уведомлять каждый час %t", checked)
 	})
 
 	content := container.NewVBox(
-		widget.NewLabelWithStyle("🧮 Калькулятор игрового времени", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
+		widget.NewLabelWithStyle("Оповещения о рыбалке", fyne.TextAlignCenter, fyne.TextStyle{Bold: true}),
 		container.NewHBox(hoursSelect, minutesSelect),
-		notifyHourlyCheck, // Переключатель
-		notifyButton,      // Кнопка
+		notifyHourlyCheck,
+		notifyButton,
 		result,
 		layout.NewSpacer(),
 	)
