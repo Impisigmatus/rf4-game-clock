@@ -2,7 +2,6 @@ package application
 
 import (
 	"fmt"
-	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -33,8 +32,16 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 	// Создаем текстовое поле
 	result := widget.NewLabel("")
 
-	// Создаем кнопку
+	// Объявляем кнопку
 	var notifyButton *widget.Button
+
+	// Создаем переключатель
+	notifyHourlyCheck := widget.NewCheck("Уведомлять каждый час", func(_ bool) {
+		notifyButton.Importance = widget.HighImportance
+		notifyButton.Refresh()
+	})
+
+	// Создаем кнопку
 	notifyButton = widget.NewButton("Уведомить", func() {
 		if notifyButton.Importance == widget.LowImportance {
 			return
@@ -47,28 +54,14 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 		if err != nil {
 			return
 		}
-		gui.notification.Alert("Не забудьте про рыбалку в %02d:%02d", hours, minutes)
 
-		if gui.timer != nil {
-			gui.timer.Stop()
+		gui.notification.Alert("Не забудьте про рыбалку в %02d:%02d", hours, minutes)
+		gui.notification.AlertWithDuration(gui.app.GetDurationToTarget(hours, minutes), "Пора на рыбалку!")
+		if notifyHourlyCheck.Checked {
+			logrus.Infof("TODO: Уведомлять каждый час")
 		}
-		gui.timer = time.AfterFunc(gui.app.GetDurationToTarget(hours, minutes), func() {
-			gui.notification.Alert("Пора на рыбалку!")
-		})
 	})
 	notifyButton.Importance = widget.HighImportance
-
-	// Создаем переключатель
-	notifyHourlyCheck := widget.NewCheck("Уведомлять каждый час", func(checked bool) {
-		if checked {
-			notifyButton.Importance = widget.LowImportance
-		} else {
-			notifyButton.Importance = widget.HighImportance
-		}
-		notifyButton.Refresh()
-
-		logrus.Infof("TODO: Уведомлять каждый час %t", checked)
-	})
 
 	setTime := func() {
 		if notifyButton.Importance == widget.LowImportance {
