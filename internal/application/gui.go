@@ -35,6 +35,11 @@ func NewGuiApplication(id string, title string, width float32, height float32, n
 
 func (gui *GuiApplication) Run() {
 	gui.window.SetContent(gui.content())
+	gui.window.SetOnClosed(func() {
+		logrus.Info("Graceful shutdown...")
+		gui.guiApp.Quit()
+	})
+
 	logrus.Info("Starting application")
 	gui.window.ShowAndRun()
 }

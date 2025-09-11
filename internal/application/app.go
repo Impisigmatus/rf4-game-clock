@@ -43,3 +43,9 @@ func (*Application) ConvertTime(hours string, minutes string) (int, int, error) 
 
 	return now.Hour(), int(totalRealMinutes), nil
 }
+
+func (*Application) GetDurationToTarget(hours int, minutes int) time.Duration {
+	now := time.Now()
+	target := time.Date(now.Year(), now.Month(), now.Day(), hours, minutes, 0, 0, now.Location())
+	return target.Sub(now)
+}

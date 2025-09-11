@@ -2,6 +2,7 @@ package application
 
 import (
 	"fmt"
+	"time"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
@@ -33,14 +34,13 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 	result := widget.NewLabel("")
 
 	setTime := func() {
-		hour, minute, err := gui.app.ConvertTime(hoursSelect.Selected, minutesSelect.Selected)
+		hours, minutes, err := gui.app.ConvertTime(hoursSelect.Selected, minutesSelect.Selected)
 		if err != nil {
 			result.SetText(err.Error())
 			return
 		}
 
-		result.SetText(fmt.Sprintf("Это игровое время наступит в %02d:%02d", hour, minute))
-		gui.notification.Alert("Не забудьте про рыбалку в %02d:%02d", hour, minute)
+		result.SetText(fmt.Sprintf("Это игровое время наступит в %02d:%02d", hours, minutes))
 	}
 
 	hoursSelect.OnChanged = func(_ string) { setTime() }
@@ -53,7 +53,16 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 			return
 		}
 
-		logrus.Info("TODO: Уведомить")
+		hours, minutes, err := gui.app.ConvertTime(hoursSelect.Selected, minutesSelect.Selected)
+		if err != nil {
+			return
+		}
+		gui.notification.Alert("Не забудьте про рыбалку в %02d:%02d", hours, minutes)
+
+		timer := time.AfterFunc(gui.app.GetDurationToTarget(hours, minutes), func() {
+			gui.notification.Alert("Пора на рыбалку!")
+		})
+		_ = timer // TODO: Нужно таймер сделать "глобальным" и останавливать с переназначением
 	})
 	notifyButton.Importance = widget.HighImportance
 
