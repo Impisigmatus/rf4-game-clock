@@ -61,9 +61,9 @@ func (gui *GuiApplication) tabNotification() *fyne.Container {
 	// Создаем переключатель
 	notifyHourlyCheck := widget.NewCheck("Уведомлять каждый час", func(checked bool) {
 		if checked {
-			notifyButton.Importance = widget.LowImportance // Серый цвет
+			notifyButton.Importance = widget.LowImportance
 		} else {
-			notifyButton.Importance = widget.HighImportance // Обычный/акцентный цвет
+			notifyButton.Importance = widget.HighImportance
 		}
 		notifyButton.Refresh()
 
