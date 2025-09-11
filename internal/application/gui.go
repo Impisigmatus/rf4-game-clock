@@ -1,6 +1,8 @@
 package application
 
 import (
+	"time"
+
 	"github.com/Impisigmatus/rf4-game-clock/internal/notification"
 	"github.com/sirupsen/logrus"
 
@@ -16,6 +18,7 @@ type GuiApplication struct {
 	window fyne.Window
 
 	notification *notification.Notification
+	timer        *time.Timer
 }
 
 func NewGuiApplication(id string, title string, width float32, height float32, notification *notification.Notification) *GuiApplication {
@@ -37,6 +40,9 @@ func (gui *GuiApplication) Run() {
 	gui.window.SetContent(gui.content())
 	gui.window.SetOnClosed(func() {
 		logrus.Info("Graceful shutdown...")
+		if gui.timer != nil {
+			gui.timer.Stop()
+		}
 		gui.guiApp.Quit()
 	})
 
